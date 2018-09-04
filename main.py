@@ -24,16 +24,19 @@ urls = {
         }
 
 def get_url(course_code):
+    """ Returns the url of the course code """
     inst = institutions[course_code[1]]
     d = urls[inst]
     pret = d.get("pret") or (lambda x: x)
     return (d["url"]).format(pret(course_code))
 
 def get_soup(url):
+    """ Returns a BeatifulSoup object containing the response from url """ 
     html = urllib.request.urlopen(url).read()
     return BeautifulSoup(html, "html5lib")
 
 def get_name(course):
+    """ Returns the name of the course code """
     url = get_url(course)
     try:
         soup = get_soup(url);
