@@ -43,10 +43,21 @@ def get_name(course):
     except Exception:
         return "{} - No such course".format(course)
 
+def print_help(args):
+    print("""
+    Användning: {} {{course-code ...}}
+
+    Där `course-code' är en Lı.u kurskod från tekniska fakulteten.
+    """.format(args[0]))
+
 def main(argv):
     course_codes = map(lambda s: s.upper(), argv[1:])
     for course in course_codes:
         print(get_name(course))
 
 if __name__ == "__main__":
+    if len(sys.argv) == 1 or sys.argv[1] in ["-h", "-?", "--help"]:
+        print_help(sys.argv)
+        exit(1)
     main(sys.argv)
+
