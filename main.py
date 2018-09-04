@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 import urllib.request
 import re
 import sys
+import subprocess
 
 institutions = {
         "A": "MAI",
@@ -56,9 +57,21 @@ def main(argv):
     for course in course_codes:
         print(get_name(course))
 
+
+def open_course_url(course):
+    url = get_url(course)
+    subprocess.call("xdg-open {}".format(url), shell=True)
+
+
 if __name__ == "__main__":
     if len(sys.argv) == 1 or sys.argv[1] in ["-h", "-?", "--help"]:
         print_help(sys.argv)
         exit(1)
+    else:
+        [prgr, action, *rest] = sys.argv
+        if action == "open":
+            open_course_url(rest[0].upper())
+            exit(0)
+
     main(sys.argv)
 
