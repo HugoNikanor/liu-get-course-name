@@ -12,24 +12,22 @@ institutions = {
         "F": "IFM"
         }
 
+# pret is a transformer for the course code, before it's inserted into
+# the url.
+
 urls = {
-        "MAI": "http://courses.mai.liu.se/GU/{}/",
-        "IDA": "https://www.ida.liu.se/~{}/index.sv.shtml",
-        "ISY": "http://www.isy.liu.se/edu/kurs/{}/",
-        "IFM": "https://www.ifm.liu.se/edu/coursescms/{}/",
+        "MAI": { "url": "http://courses.mai.liu.se/GU/{}/" },
+        "IDA": { "url": "https://www.ida.liu.se/~{}/index.sv.shtml" },
+        "ISY": { "url": "http://www.isy.liu.se/edu/kurs/{}/" },
+        "IFM": { "url": "https://www.ifm.liu.se/edu/coursescms/{}/",
+                 "pret": lambda x: x.lower() }
         }
-
-transformers = {
-        "MAI": lambda x: x,
-        "IDA": lambda x: x,
-        "ISY": lambda x: x,
-        "IFM": lambda x: x.lower()
-        }      
-
 
 def get_url(course_code):
     inst = institutions[course_code[1]]
-    return urls[inst].format(transformers[inst](course_code))
+    d = urls[inst]
+    pret = d.get("pret") or (lambda x: x)
+    return (d["url"]).format(pret(course_code))
 
 def get_soup(url):
     html = urllib.request.urlopen(url).read()
