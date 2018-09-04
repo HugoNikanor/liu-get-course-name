@@ -14,8 +14,8 @@ institutions = {
 
 urls = {
         "MAI": "http://courses.mai.liu.se/GU/{}/",
-        "IDA": "https://www.ida.liu.se/~{}/",
-        "ISY": "http://www.isy.liu.se/en/edu/kurs/{}/",
+        "IDA": "https://www.ida.liu.se/~{}/index.sv.shtml",
+        "ISY": "http://www.isy.liu.se/edu/kurs/{}/",
         "IFM": "https://www.ifm.liu.se/edu/coursescms/{}/",
         }
 
