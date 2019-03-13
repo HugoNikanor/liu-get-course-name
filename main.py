@@ -5,44 +5,44 @@ import urllib.request
 import re
 import sys
 import subprocess
-
-institutions = {
-        "A": "MAI",
-        "D": "IDA",
-        "S": "ISY",
-        "F": "IFM"
-        }
+from time import time
 
 # pret is a transformer for the course code, before it's inserted into
 # the url.
 
-urls = {
-        "MAI": { "url": "http://courses.mai.liu.se/GU/{}/" },
-        "IDA": { "url": "https://www.ida.liu.se/~{}/index.sv.shtml" },
-        "ISY": { "url": "http://www.isy.liu.se/edu/kurs/{}/" },
-        "IFM": { "url": "https://www.ifm.liu.se/edu/coursescms/{}/",
-                 "pret": lambda x: x.lower() }
-        }
-
 def get_url(course_code):
     """ Returns the url of the course code """
-    inst = institutions[course_code[1]]
-    d = urls[inst]
-    pret = d.get("pret") or (lambda x: x)
-    return (d["url"]).format(pret(course_code))
+    # inst = institutions[course_code[1]]
+    # d = urls[inst]
+    # pret = d.get("pret") or (lambda x: x)
+    # return (d["url"]).format(pret(course_code))
+    return f"https://liu.se/studieinfo/kurs/{course_code}/"
 
 def get_soup(url):
     """ Returns a BeatifulSoup object containing the response from url """ 
+    a = time()
     html = urllib.request.urlopen(url).read()
-    return BeautifulSoup(html, "html5lib")
+    b = time()
+    s = BeautifulSoup(html, "html5lib")
+    c = time()
+    
+    print(f"{b - a:.3f}s | Downloading html \n"
+          f"{c - b:.3f}s | Beautifulsoup \n"
+          f"{c - a:.3f}s | Total\n")
+
+    return s
 
 def get_name(course):
     """ Returns the name of the course code """
     url = get_url(course)
     try:
         soup = get_soup(url);
-        return soup.body.findAll("h1", text=re.compile(course))[0].text.strip()
-    except Exception:
+        header = soup.body.find("main", {"class": "site-block"}).find("header")
+        sv = header.find("h1").text
+        en = header.find("p").text
+        return sv, en
+    except Exception as e:
+        print(e)
         return "{} - No such course".format(course)
 
 def print_help(args):
@@ -55,7 +55,8 @@ def print_help(args):
 def main(argv):
     course_codes = map(lambda s: s.upper(), argv[1:])
     for course in course_codes:
-        print(get_name(course))
+        sv, en = get_name(course)
+        print(sv.split(",")[0])
 
 
 def open_course_url(course):
